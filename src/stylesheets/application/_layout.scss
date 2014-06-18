@@ -1,0 +1,8 @@
+.columns {
+  @include clearfix;
+}
+
+.col-50 {
+  float: left;
+  width: 50%;
+}

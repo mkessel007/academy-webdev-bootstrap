@@ -1,0 +1,12 @@
+@import "compass/reset";
+@import "compass/utilities/general/clearfix";
+
+@import "./application/layout";
+
+$background-color: #1abc9c;
+
+body {
+  font-family: "Helvetica", "Arial", "sans";
+  background-color: $background-color;
+  color: #fff;
+}
