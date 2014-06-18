@@ -139,7 +139,7 @@ gulp.task 'watchify', ->
   entry = "#{BASES.src}/scripts/application.coffee"
   output = 'application.js'
   bundler = watchify entry
-  bundler.transform 'coffeeify'
+  bundler.transform coffeeify
   requireExternals bundler, EXTERNALS
 
   rebundle = ->
