@@ -1,0 +1,37 @@
+!!! 5
+%html{ :lang => 'de' }
+  %head
+    <!--                                                                             -->
+    <!--  ________       .__                                __                       -->
+    <!-- /   __   \ ____ |  |   ____   _____   ____   _____/  |_  ______             -->
+    <!-- \____    // __ \|  | _/ __ \ /     \_/ __ \ /    \   __\/  ___/             -->
+    <!--    /    /\  ___/|  |_\  ___/|  Y Y  \  ___/|   |  \  |  \___ \              -->
+    <!--   /____/  \___  >____/\___  >__|_|  /\___  >___|  /__| /____                -->
+    <!--               \/          \/      \/     \/     \/          \/              -->
+    <!--                                                                             -->
+    <!-- Made by the fine people at http://9elements.com - and hey if you read this: -->
+    <!-- We are always looking for talented ruby and javascript coders.              -->
+    <!--                                                                             -->
+
+    %meta{ :charset => "utf-8" }
+    %meta{ :http_equiv => "X-UA-Compatible", :content => "chrome=1" }
+
+    /[if IE 7]
+      %link{ :rel => "stylesheet", :type => "text/css", :href => "/stylesheets/ie7.css" }
+    /[if IE 8]
+      %link{ :rel => "stylesheet", :type => "text/css", :href => "/stylesheets/ie8.css" }
+    /[if IE 9]
+      %link{ :rel => "stylesheet", :type => "text/css", :href => "/stylesheets/ie9.css" }
+
+    %link{ :rel => "stylesheet", :type => "text/css", :href => "/stylesheets/application.css" }
+    %script{ :type => "text/javascript", :src => "/scripts/application.js" }
+  %body
+    %h1
+      Hello World!
+    .columns
+      .col-50
+        Left
+      .col-50
+        Right
+    %p
+      This is a footer
