@@ -127,12 +127,12 @@ gulp.task 'cssmin:minify', ->
 # Browserify
 ###############################################################################
 
-requireExternals = (b, externals) ->
+requireExternals = (bundler, externals) ->
   for external in externals
     if external.expose?
-      b.require external.require, expose: external.expose
+      bundler.require external.require, expose: external.expose
     else
-      b.require external.require
+      bundler.require external.require
 
 gulp.task 'watchify', ->
   console.log 'watchify'
