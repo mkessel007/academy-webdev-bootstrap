@@ -12,8 +12,15 @@ jQuery ($) ->
   window.setInterval(->
     nextIndex = currentIndex + 1
     nextIndex = nextIndex % numberOfImages
-    $('ul.images li', slideshowContainer).eq(nextIndex).fadeIn(250)
-    $('ul.images li', slideshowContainer).eq(currentIndex).delay(250).fadeOut()
+    $nextIndexElement = $('ul.images li', slideshowContainer).eq(nextIndex)
+    $currentIndexElement = $('ul.images li', slideshowContainer).eq(currentIndex).delay(250)
+
+    $nextIndexElement.css('z-index', 2)
+    $nextIndexElement.fadeIn(250)
+
+    $currentIndexElement.css('z-index', 1)
+    $currentIndexElement.fadeOut()
+
     currentIndex = nextIndex
   ,1000)
   return
