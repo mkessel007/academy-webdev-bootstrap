@@ -1,7 +1,27 @@
 .slideshow-container {
+  position: relative;
   width: 960px;
   height: 450px;
   overflow: hidden;
+  a.previousButton, a.nextButton {
+    background: rgba(255,255,255,0.5);
+    color: #333;
+    padding: 20px;
+    margin-top: -30px;
+    text-decoration: none;
+  }
+  a.previousButton {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    z-index: 3;
+  }
+  a.nextButton {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    z-index: 3;
+  }
   ul {
     position: relative;
     li {
