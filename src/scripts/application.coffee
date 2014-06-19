@@ -9,9 +9,7 @@ jQuery ($) ->
     $li.hide()
   $('ul.images li', slideshowContainer).eq(currentIndex).show()
 
-  window.setInterval(->
-    nextIndex = currentIndex + 1
-    nextIndex = nextIndex % numberOfImages
+  showImage = (nextIndex) ->
     $nextIndexElement = $('ul.images li', slideshowContainer).eq(nextIndex)
     $currentIndexElement = $('ul.images li', slideshowContainer).eq(currentIndex).delay(250)
 
@@ -20,6 +18,14 @@ jQuery ($) ->
 
     $currentIndexElement.css('z-index', 1)
     $currentIndexElement.fadeOut()
+
+    return
+
+  window.setInterval(->
+    nextIndex = currentIndex + 1
+    nextIndex = nextIndex % numberOfImages
+
+    showImage(nextIndex)
 
     currentIndex = nextIndex
   ,1000)
