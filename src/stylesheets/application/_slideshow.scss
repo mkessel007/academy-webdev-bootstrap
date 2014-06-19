@@ -16,13 +16,31 @@
     top: 50%;
     z-index: 3;
   }
+  .dot-navigation {
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    z-index: 3;
+    width: 100%;
+    text-align: center;
+    a {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      background-color: rgba(0,0,0,0.5);
+      @include border-radius(10px);
+    }
+    a.active {
+      background-color: rgba(255,255,255,0.5);
+    }
+  }
   a.nextButton {
     position: absolute;
     right: 0;
     top: 50%;
     z-index: 3;
   }
-  ul {
+  ul.images {
     position: relative;
     li {
       position: absolute;
