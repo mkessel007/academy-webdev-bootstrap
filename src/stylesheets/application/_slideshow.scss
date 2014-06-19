@@ -1,10 +1,16 @@
 .slideshow-container {
+  width: 960px;
+  height: 450px;
+  overflow: hidden;
   ul {
     position: relative;
     li {
       position: absolute;
       left: 0;
       top: 0;
+      img {
+        width: 960px;
+      }
     }
   }
 }
