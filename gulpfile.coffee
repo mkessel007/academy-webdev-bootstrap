@@ -19,6 +19,7 @@ fs             = require 'fs'
 source         = require 'vinyl-source-stream'
 watchify       = require 'watchify'
 coffeeify      = require 'coffeeify'
+plumber        = require 'gulp-plumber'
 
 ###############################################################################
 # constants
@@ -61,6 +62,7 @@ gulp.task 'clean', ->
 
 gulp.task 'haml', ->
   gulp.src(["#{BASES.src}/**/*.haml", "!#{BASES.src}/pages/**/_*"])
+    .pipe(plumber())
     .pipe(haml())
     .on('error', notify.onError({ onError: true }))
     .on('error', gutil.log)
@@ -74,6 +76,7 @@ gulp.task 'haml', ->
 
 gulp.task 'coffeelint', ->
   gulp.src('#{BASES.src}/scripts/**/*.coffee')
+    .pipe(plumber())
     .pipe(coffeelint())
     .pipe(coffeelint.reporter())
 
@@ -83,6 +86,7 @@ gulp.task 'coffeelint', ->
 
 gulp.task 'compass', ->
   gulp.src(["#{BASES.src}/stylesheets/**/*.{css,scss,sass}", "!#{BASES.src}/pages/**/_*"])
+    .pipe(plumber())
     .pipe(compass(
       config_file: './config.rb'
       css: "build/stylesheets",
@@ -100,6 +104,7 @@ gulp.task 'compass', ->
 
 gulp.task 'copy', ->
   gulp.src("#{BASES.src}/assets/**")
+    .pipe(plumber())
     .pipe(gulp.dest("#{BASES.build}/assets"))
     .pipe(refresh(lrserver))
 
@@ -109,6 +114,7 @@ gulp.task 'copy', ->
 
 gulp.task 'uglify:all', ->
   gulp.src('#{BASES.build}/scripts/*.js')
+    .pipe(plumber())
     .pipe(uglify())
     .pipe(rename({ suffix: '.min' }))
     .pipe(gulp.dest("#{BASES.build}/scripts"))
@@ -119,6 +125,7 @@ gulp.task 'uglify:all', ->
 
 gulp.task 'cssmin:minify', ->
   gulp.src('#{BASES.build}/stylesheets/*.css')
+    .pipe(plumber())
     .pipe(cssmin())
     .pipe(rename({ suffix: '.min' }))
     .pipe(gulp.dest("#{BASES.build}/stylesheets"));
@@ -146,6 +153,7 @@ gulp.task 'watchify', ->
     console.log "rebundle"
     stream = bundler.bundle()
     stream.on 'error', notify.onError({ onError: true })
+      .pipe(plumber())
       .pipe(source(output))
       .pipe(gulp.dest(SCRIPTS_BUILD_DIR))
       .pipe(refresh(lrserver))
