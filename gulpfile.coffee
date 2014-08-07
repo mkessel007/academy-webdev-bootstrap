@@ -1,25 +1,15 @@
-es             = require 'event-stream'
-gulp           = require 'gulp'
-gutil          = require 'gulp-util'
-runSequence    = require 'run-sequence'
-clean          = require 'gulp-clean'
-concat         = require 'gulp-concat'
-compass        = require 'gulp-compass'
-haml           = require 'gulp-ruby-haml'
-coffeelint     = require 'gulp-coffeelint'
-cssmin         = require 'gulp-cssmin'
-rename         = require 'gulp-rename'
-uglify         = require 'gulp-uglify'
-notify         = require 'gulp-notify'
-refresh        = require 'gulp-livereload'
-express        = require 'express'
-livereload     = require 'connect-livereload'
-tinylr         = require 'tiny-lr'
-fs             = require 'fs'
-source         = require 'vinyl-source-stream'
-watchify       = require 'watchify'
-coffeeify      = require 'coffeeify'
-plumber        = require 'gulp-plumber'
+es              = require 'event-stream'
+gulp            = require 'gulp'
+express         = require 'express'
+livereload      = require 'connect-livereload'
+tinylr          = require 'tiny-lr'
+fs              = require 'fs'
+source          = require 'vinyl-source-stream'
+watchify        = require 'watchify'
+coffeeify       = require 'coffeeify'
+runSequence     = require 'run-sequence'
+gulpLoadPlugins = require 'gulp-load-plugins'
+$               = gulpLoadPlugins()
 
 ###############################################################################
 # constants
@@ -54,7 +44,7 @@ server.use(express.static(BASES.build))
 ###############################################################################
 
 gulp.task 'clean', ->
-  gulp.src(BASES.build).pipe(clean())
+  gulp.src(BASES.build).pipe($.clean())
 
 ###############################################################################
 # haml
@@ -62,13 +52,13 @@ gulp.task 'clean', ->
 
 gulp.task 'haml', ->
   gulp.src(["#{BASES.src}/**/*.haml", "!#{BASES.src}/pages/**/_*"])
-    .pipe(plumber())
-    .pipe(haml())
-    .on('error', notify.onError({ onError: true }))
-    .on('error', gutil.log)
-    .on('error', gutil.beep)
+    .pipe($.plumber())
+    .pipe($.rubyHaml())
+    .on('error', $.notify.onError({ onError: true }))
+    .on('error', $.util.log)
+    .on('error', $.util.beep)
     .pipe(gulp.dest("#{BASES.build}"))
-    .pipe(refresh(lrserver))
+    .pipe($.livereload(lrserver))
 
 ###############################################################################
 # coffeelint
@@ -76,9 +66,9 @@ gulp.task 'haml', ->
 
 gulp.task 'coffeelint', ->
   gulp.src('#{BASES.src}/scripts/**/*.coffee')
-    .pipe(plumber())
-    .pipe(coffeelint())
-    .pipe(coffeelint.reporter())
+    .pipe($.plumber())
+    .pipe($.coffeelint())
+    .pipe($.coffeelint.reporter())
 
 ###############################################################################
 # compass
@@ -86,17 +76,17 @@ gulp.task 'coffeelint', ->
 
 gulp.task 'compass', ->
   gulp.src(["#{BASES.src}/stylesheets/**/*.{css,scss,sass}", "!#{BASES.src}/pages/**/_*"])
-    .pipe(plumber())
-    .pipe(compass(
+    .pipe($.plumber())
+    .pipe($.compass(
       config_file: './config.rb'
       css: "build/stylesheets",
       sass: "src/stylesheets"
     ))
-    .on('error', notify.onError({ onError: true }))
-    .on('error', gutil.log)
-    .on('error', gutil.beep)
+    .on('error', $.notify.onError({ onError: true }))
+    .on('error', $.util.log)
+    .on('error', $.util.beep)
     .pipe(gulp.dest("#{BASES.build}/stylesheets"))
-    .pipe(refresh(lrserver))
+    .pipe($.livereload(lrserver))
 
 ###############################################################################
 # copy
@@ -104,9 +94,9 @@ gulp.task 'compass', ->
 
 gulp.task 'copy', ->
   gulp.src("#{BASES.src}/assets/**")
-    .pipe(plumber())
+    .pipe($.plumber())
     .pipe(gulp.dest("#{BASES.build}/assets"))
-    .pipe(refresh(lrserver))
+    .pipe($.livereload(lrserver))
 
 ###############################################################################
 # uglify:all
@@ -114,9 +104,9 @@ gulp.task 'copy', ->
 
 gulp.task 'uglify:all', ->
   gulp.src('#{BASES.build}/scripts/*.js')
-    .pipe(plumber())
-    .pipe(uglify())
-    .pipe(rename({ suffix: '.min' }))
+    .pipe($.plumber())
+    .pipe($.uglify())
+    .pipe($.rename({ suffix: '.min' }))
     .pipe(gulp.dest("#{BASES.build}/scripts"))
 
 ###############################################################################
@@ -125,9 +115,9 @@ gulp.task 'uglify:all', ->
 
 gulp.task 'cssmin:minify', ->
   gulp.src('#{BASES.build}/stylesheets/*.css')
-    .pipe(plumber())
-    .pipe(cssmin())
-    .pipe(rename({ suffix: '.min' }))
+    .pipe($.plumber())
+    .pipe($.cssmin())
+    .pipe($.rename({ suffix: '.min' }))
     .pipe(gulp.dest("#{BASES.build}/stylesheets"));
 
 ###############################################################################
@@ -152,11 +142,11 @@ gulp.task 'watchify', ->
   rebundle = ->
     console.log "rebundle"
     stream = bundler.bundle()
-    stream.on 'error', notify.onError({ onError: true })
-      .pipe(plumber())
+    stream.on 'error', $.notify.onError({ onError: true })
+      .pipe($.plumber())
       .pipe(source(output))
       .pipe(gulp.dest(SCRIPTS_BUILD_DIR))
-      .pipe(refresh(lrserver))
+      .pipe($.livereload(lrserver))
     stream
 
   bundler.on 'update', rebundle
