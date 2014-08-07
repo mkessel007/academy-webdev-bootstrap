@@ -55,7 +55,7 @@ The `gulp watch` task can be used for watching all assets, haml files and styles
 
 #### Serve
 
-The `gulp serve` task can be used for serving a local server to view your current page under `http://localhost:3456` and serving a LiveReload server on port `35729`.
+The `gulp serve` task can be used for serving a local server to view your current page under `http://localhost:3456`
 
 
 ### Tools we are using
@@ -64,5 +64,4 @@ The `gulp serve` task can be used for serving a local server to view your curren
   - browserify via watchify
   - CoffeeScript
   - scss / sass
-  - React.js
   - Bundler
