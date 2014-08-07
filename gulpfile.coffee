@@ -1,14 +1,13 @@
 es              = require 'event-stream'
 gulp            = require 'gulp'
-express         = require 'express'
-livereload      = require 'connect-livereload'
-tinylr          = require 'tiny-lr'
 fs              = require 'fs'
 source          = require 'vinyl-source-stream'
 watchify        = require 'watchify'
 coffeeify       = require 'coffeeify'
 runSequence     = require 'run-sequence'
 gulpLoadPlugins = require 'gulp-load-plugins'
+browserSync     = require 'browser-sync'
+reload          = browserSync.reload
 $               = gulpLoadPlugins()
 
 ###############################################################################
@@ -20,7 +19,6 @@ BASES =
   build: './build'
 
 SERVER_PORT       = 3456
-LIVE_RELOAD_PORT  = 35729
 
 VENDOR_DIR        = "./#{BASES.src}/scripts/vendor/"
 SCRIPTS_BUILD_DIR = "#{BASES.build}/scripts"
@@ -30,14 +28,6 @@ EXTERNALS         = [
   { require: "jquery", expose: 'jquery' }
   { require: "rsvp",   expose: 'rsvp' }
 ]
-
-lrserver = tinylr()
-
-server = express()
-server.use(livereload(
-  port: LIVE_RELOAD_PORT
-))
-server.use(express.static(BASES.build))
 
 ###############################################################################
 # clean
@@ -58,7 +48,7 @@ gulp.task 'haml', ->
     .on('error', $.util.log)
     .on('error', $.util.beep)
     .pipe(gulp.dest("#{BASES.build}"))
-    .pipe($.livereload(lrserver))
+    .pipe(reload({stream: true, once: true}))
 
 ###############################################################################
 # coffeelint
@@ -86,7 +76,7 @@ gulp.task 'compass', ->
     .on('error', $.util.log)
     .on('error', $.util.beep)
     .pipe(gulp.dest("#{BASES.build}/stylesheets"))
-    .pipe($.livereload(lrserver))
+    .pipe(reload({ stream: true }))
 
 ###############################################################################
 # copy
@@ -96,7 +86,7 @@ gulp.task 'copy', ->
   gulp.src("#{BASES.src}/assets/**")
     .pipe($.plumber())
     .pipe(gulp.dest("#{BASES.build}/assets"))
-    .pipe($.livereload(lrserver))
+    .pipe(reload({ stream: true, once: true }))
 
 ###############################################################################
 # uglify:all
@@ -146,7 +136,7 @@ gulp.task 'watchify', ->
       .pipe($.plumber())
       .pipe(source(output))
       .pipe(gulp.dest(SCRIPTS_BUILD_DIR))
-      .pipe($.livereload(lrserver))
+      .pipe(reload({ stream: true, once: true }))
     stream
 
   bundler.on 'update', rebundle
@@ -164,10 +154,17 @@ gulp.task 'watch', ->
 ###############################################################################
 # serve
 ###############################################################################
-
 gulp.task 'serve', ->
-  server.listen SERVER_PORT
-  lrserver.listen LIVE_RELOAD_PORT
+  browserSync({
+    notify: false,
+    server: {
+      baseDir: [BASES.build]
+    },
+    ports: {
+      min: SERVER_PORT
+    }
+  })
+  console.log "Point your browser to #{SERVER_PORT}"
 
 ###############################################################################
 # high level tasks
