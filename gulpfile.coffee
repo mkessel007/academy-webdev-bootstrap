@@ -2,6 +2,7 @@ es              = require 'event-stream'
 gulp            = require 'gulp'
 fs              = require 'fs'
 source          = require 'vinyl-source-stream'
+browserify      = require 'browserify'
 watchify        = require 'watchify'
 coffeeify       = require 'coffeeify'
 runSequence     = require 'run-sequence'
@@ -9,6 +10,7 @@ gulpLoadPlugins = require 'gulp-load-plugins'
 browserSync     = require 'browser-sync'
 reload          = browserSync.reload
 $               = gulpLoadPlugins()
+isProduction    = false
 
 ###############################################################################
 # constants
@@ -28,6 +30,11 @@ EXTERNALS         = [
   { require: "jquery", expose: 'jquery' }
   { require: "rsvp",   expose: 'rsvp' }
 ]
+###############################################################################
+# clean
+###############################################################################
+gulp.task 'set-production', ->
+  isProduction = true
 
 ###############################################################################
 # clean
@@ -48,7 +55,7 @@ gulp.task 'haml', ->
     .on('error', $.util.log)
     .on('error', $.util.beep)
     .pipe(gulp.dest("#{BASES.build}"))
-    .pipe(reload({stream: true, once: true}))
+    .pipe($.if(!isProduction, reload({ stream: true, once: true })))
 
 ###############################################################################
 # coffeelint
@@ -76,7 +83,7 @@ gulp.task 'compass', ->
     .on('error', $.util.log)
     .on('error', $.util.beep)
     .pipe(gulp.dest("#{BASES.build}/stylesheets"))
-    .pipe(reload({ stream: true }))
+    .pipe($.if(!isProduction, reload({ stream: true, once: true })))
 
 ###############################################################################
 # copy
@@ -86,7 +93,7 @@ gulp.task 'copy', ->
   gulp.src("#{BASES.src}/assets/**")
     .pipe($.plumber())
     .pipe(gulp.dest("#{BASES.build}/assets"))
-    .pipe(reload({ stream: true, once: true }))
+    .pipe($.if(!isProduction, reload({ stream: true, once: true })))
 
 ###############################################################################
 # uglify:all
@@ -125,7 +132,10 @@ gulp.task 'watchify', ->
   console.log 'watchify'
   entry = "#{BASES.src}/scripts/application.coffee"
   output = 'application.js'
-  bundler = watchify entry
+  if isProduction
+    bundler = browserify(entry)
+  else
+    bundler = watchify(entry)
   bundler.transform coffeeify
   requireExternals bundler, EXTERNALS
 
@@ -136,7 +146,7 @@ gulp.task 'watchify', ->
       .pipe($.plumber())
       .pipe(source(output))
       .pipe(gulp.dest(SCRIPTS_BUILD_DIR))
-      .pipe(reload({ stream: true, once: true }))
+      .pipe($.if(!isProduction, reload({ stream: true, once: true })))
     stream
 
   bundler.on 'update', rebundle
@@ -184,13 +194,11 @@ gulp.task 'build', ->
       'build:markup'
       'build:scripts'
       'build:stylesheets'
-    ],
-    [
-      'serve'
-      'watch'
     ]
-
   )
   seq
 
-gulp.task 'default', ['build']
+gulp.task 'heroku', ->
+  runSequence('set-production', 'build')
+gulp.task 'default', ->
+  runSequence('build', 'serve', 'watch')
